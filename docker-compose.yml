@@ -11,12 +11,18 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-uroot", "-proot"]
+      interval: 5s
+      retries: 10
+      timeout: 5s
 
   app:
     build: .
     container_name: java_app
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       DB_URL: jdbc:mysql://mysql:3306/testdb
       DB_USERNAME: root
