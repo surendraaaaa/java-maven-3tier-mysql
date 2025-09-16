@@ -10,28 +10,38 @@ public class UserDao {
     private Connection connection;
 
     public UserDao() {
-        try {
-            // 1️⃣ Read from environment variables first
-            String url = System.getenv("DB_URL");
-            String username = System.getenv("DB_USERNAME");
-            String password = System.getenv("DB_PASSWORD");
+    try {
+        // 1️⃣ Read from environment variables first
+        String url = System.getenv("DB_URL");
+        String username = System.getenv("DB_USERNAME");
+        String password = System.getenv("DB_PASSWORD");
 
-            // 2️⃣ Fallback to application.properties if env vars are missing
-            if (url == null || username == null || password == null) {
-                Properties props = new Properties();
-                props.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
-                url = props.getProperty("db.url");
-                username = props.getProperty("db.username");
-                password = props.getProperty("db.password");
-            }
-
-            connection = DriverManager.getConnection(url, username, password);
-            System.out.println("Connected to DB: " + url);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        // 2️⃣ Fallback to application.properties if env vars are missing
+        if (url == null || username == null || password == null) {
+            Properties props = new Properties();
+            props.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
+            url = props.getProperty("db.url");
+            username = props.getProperty("db.username");
+            password = props.getProperty("db.password");
         }
+
+        connection = DriverManager.getConnection(url, username, password);
+        System.out.println("Connected to DB: " + url);
+
+        // 3️⃣ Ensure users table exists
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS users ("
+                + "id INT AUTO_INCREMENT PRIMARY KEY,"
+                + "name VARCHAR(100) NOT NULL,"
+                + "email VARCHAR(100) NOT NULL"
+                + ")";
+        Statement stmt = connection.createStatement();
+        stmt.execute(createTableSQL);
+
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
+
 
     public void addUser(User user) throws SQLException {
         String sql = "INSERT INTO users (name, email) VALUES (?, ?)";
