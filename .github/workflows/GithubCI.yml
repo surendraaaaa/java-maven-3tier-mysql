@@ -37,7 +37,7 @@ jobs:
 
       - name: Run Java Controller in App container
         run: |
-          docker exec java_app java -cp app.jar com.example.controller.UserController
+          docker-compose run --rm app java -cp app.jar com.example.controller.UserController
 
       # - name: Tear down
       #   run: docker-compose down
