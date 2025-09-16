@@ -1,0 +1,32 @@
+name: CI with Docker Compose
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build & Run Docker Compose
+        run: |
+          docker-compose up --build -d
+          # Wait for MySQL to be ready
+          echo "Waiting 15s for MySQL to initialize..."
+          sleep 15
+
+      - name: Run Java Controller in App container
+        run: |
+          docker exec java_app java -cp app.jar com.example.controller.UserController
+
+     # - name: Tear down
+     #  run: docker-compose down
