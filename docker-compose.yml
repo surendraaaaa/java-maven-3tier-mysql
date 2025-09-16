@@ -12,5 +12,18 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  app:
+    build: .
+    container_name: java_app
+    depends_on:
+      - mysql
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/testdb
+      DB_USERNAME: root
+      DB_PASSWORD: rootpassword
+    ports:
+      - "8080:8080"
+
 volumes:
   mysql_data:
+
