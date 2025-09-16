@@ -26,9 +26,14 @@ jobs:
       - name: Build & Run Docker Compose
         run: |
           docker-compose up --build -d
-          # Wait for MySQL to be ready
-          echo "Waiting 15s for MySQL to initialize..."
-          sleep 15
+
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {1..30}; do
+            docker exec mysql_db mysqladmin ping -uroot -prootpassword &> /dev/null && break
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
 
       - name: Run Java Controller in App container
         run: |
@@ -36,4 +41,5 @@ jobs:
 
       # - name: Tear down
       #   run: docker-compose down
+
 
