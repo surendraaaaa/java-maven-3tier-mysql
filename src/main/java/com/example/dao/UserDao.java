@@ -11,12 +11,23 @@ public class UserDao {
 
     public UserDao() {
         try {
-            Properties props = new Properties();
-            props.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
-            String url = props.getProperty("db.url");
-            String username = props.getProperty("db.username");
-            String password = props.getProperty("db.password");
+            // 1️⃣ Read from environment variables first
+            String url = System.getenv("DB_URL");
+            String username = System.getenv("DB_USERNAME");
+            String password = System.getenv("DB_PASSWORD");
+
+            // 2️⃣ Fallback to application.properties if env vars are missing
+            if (url == null || username == null || password == null) {
+                Properties props = new Properties();
+                props.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
+                url = props.getProperty("db.url");
+                username = props.getProperty("db.username");
+                password = props.getProperty("db.password");
+            }
+
             connection = DriverManager.getConnection(url, username, password);
+            System.out.println("Connected to DB: " + url);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
