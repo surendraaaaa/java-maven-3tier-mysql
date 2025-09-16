@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My App</title>
+</head>
+<body>
+    <h1>Hello, this is your frontend served by Spring Boot!</h1>
+    <p>Users from DB:</p>
+    <ul>
+        <li th:each="user : ${users}" th:text="${user.name}">User Name</li>
+    </ul>
+</body>
+</html>
+
