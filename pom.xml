@@ -32,6 +32,7 @@
     </dependencies>
 
     <build>
+              <finalName>java-maven-3tier-mysql-app</finalName>
         <plugins>
                  <plugin>
   <groupId>org.codehaus.mojo</groupId>
