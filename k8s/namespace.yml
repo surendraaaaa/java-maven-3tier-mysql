@@ -1,0 +1,5 @@
+# manifest for namespace
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: java-maven-app
