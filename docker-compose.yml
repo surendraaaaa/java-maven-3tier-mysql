@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:8.1
+    image: mysql:8.0.33
     container_name: java-maven-3tier-mysql-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -18,7 +18,7 @@ services:
       retries: 20
       timeout: 5s
 
-  app:
+  backend:
     build: .
     container_name: java-maven-3tier-mysql-app
     depends_on:
@@ -31,6 +31,20 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/ || exit 1"]
+      interval: 10s
+      retries: 10
+      timeout: 5s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: my-frontend
+    ports:
+      - "3000:80"
+    
 
 volumes:
   mysql_data:

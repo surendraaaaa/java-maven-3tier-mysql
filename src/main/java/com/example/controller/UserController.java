@@ -1,17 +1,34 @@
 package com.example.controller;
 
-import com.example.model.User;
-import com.example.service.UserService;
-import java.sql.SQLException;
+import com.example.entity.User;
+import com.example.repository.UserRepository;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
+@RestController
+@CrossOrigin(origins = "http://localhost:3000") // allow frontend
 public class UserController {
-    public static void main(String[] args) throws SQLException {
-        UserService userService = new UserService();
-        userService.registerUser(new User(0, "John Doe", "john@example.com"));
-        List<User> users = userService.listUsers();
-        for (User u : users) {
-            System.out.println(u.getId() + " | " + u.getName() + " | " + u.getEmail());
-        }
+
+    private final UserRepository userRepository;
+
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    // Save new user
+    @PostMapping("/users")
+    public User addUser(@RequestBody User user) {
+        User savedUser = userRepository.save(user);
+        userRepository.flush(); // ensure ID is generated
+        return savedUser;
+    }
+
+    // Get all users (optional, for testing)
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
+
+
