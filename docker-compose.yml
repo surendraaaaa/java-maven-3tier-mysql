@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8.0.33
-    container_name: java-maven-3tier-mysql-mysql
+    container_name: surendraprajapati/3tier-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: testdb
@@ -20,7 +20,7 @@ services:
 
   backend:
     build: .
-    container_name: java-maven-3tier-mysql-app
+    container_name: surendraprajapati/3tier-backend
     depends_on:
       mysql:
         condition: service_healthy
@@ -41,7 +41,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: my-frontend
+    container_name: surendraprajapati/3tier-frontend
     ports:
       - "3000:80"
     
