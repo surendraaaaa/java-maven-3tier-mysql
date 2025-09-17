@@ -1,10 +1,26 @@
-# This is deployment for mysql 
-
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: mysql
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  namespace: mysql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql
-  namespace: java-maven-app
+  namespace: mysql
 spec:
   replicas: 1
   selector:
@@ -17,7 +33,7 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: mysql:8.1
+        image: mysql:8.0.33
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: "root"
@@ -32,6 +48,19 @@ spec:
       - name: mysql-data
         persistentVolumeClaim:
           claimName: mysql-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  namespace: mysql
+spec:
+  selector:
+    app: mysql
+  ports:
+    - port: 3306
+      targetPort: 3306
+      protocol: TCP
 
 
      
