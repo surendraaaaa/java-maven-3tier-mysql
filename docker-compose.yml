@@ -20,7 +20,8 @@ services:
 
   backend:
     build: .
-    container_name: surendraprajapati/3tier-backend
+    image: surendraprajapati/3tier-backend:latest
+    container_name: 3tier-backend
     depends_on:
       mysql:
         condition: service_healthy
@@ -41,7 +42,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: surendraprajapati/3tier-frontend
+    image: surendraprajapati/3tier-frontend:latest
+    container_name: 3tier-frontend
     ports:
       - "3000:80"
     
