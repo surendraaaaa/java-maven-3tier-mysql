@@ -23,11 +23,11 @@ spec:
       - name: java-app
         image: surendraprajapati/java-maven-3tier-mysql:latest
         env:
-        - name: DB_URL
-          value: jdbc:mysql://mysql:3306/testdb
-        - name: DB_USERNAME
+        - name: SPRING_DATASOURCE_URL   
+          value: jdbc:mysql://mysql-service.mysql:3306/testdb
+        - name: SPRING_DATASOURCE_USERNAME
           value: root
-        - name: DB_PASSWORD
+        - name: SPRING_DATASOURCE_PASSWORD
           value: root
         ports:
         - containerPort: 8080
@@ -45,6 +45,7 @@ spec:
       port: 8080
       targetPort: 8080
   type: LoadBalancer
+
 
 
 
