@@ -3,7 +3,7 @@ name: Mirror to Azure DevOps
 on:
   push:
     branches:
-      - main   # or master, depending on your repo
+      - main   # adjust if your GitHub repo uses "master" instead
 
 jobs:
   sync:
@@ -17,7 +17,8 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
 
-          git remote add azure https://$(AZURE_USERNAME):$(AZURE_PAT)@dev.azure.com/<ORG>/<PROJECT>/_git/<REPO>
+          # Add Azure DevOps as a remote and push
+          git remote add azure https://$(AZURE_USERNAME):$(AZURE_PAT)@dev.azure.com/ashukumavat2410/_git/Java-YAML-CICD
           git push azure main --force
         env:
           AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
