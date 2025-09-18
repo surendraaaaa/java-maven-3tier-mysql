@@ -18,7 +18,7 @@ jobs:
           git config --global user.name "GitHub Actions"
 
           # Add Azure DevOps as a remote and push
-          git remote add azure https://$(AZURE_USERNAME):$(AZURE_PAT)@dev.azure.com/ashukumavat2410/_git/Java-YAML-CICD
+          git remote add azure https://<AZURE_USERNAME>:<AZURE_PAT>@dev.azure.com/ashukumavat2410/_git/Java-YAML-CICD
           git push azure main --force
         env:
           AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
