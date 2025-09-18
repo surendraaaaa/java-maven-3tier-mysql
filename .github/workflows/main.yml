@@ -1,25 +1,23 @@
-name: Mirror to Azure DevOps
-# this
+name: Sync to Azure DevOps
+
 on:
   push:
     branches:
-      - main   # adjust if your GitHub repo uses "master" instead
+      - main   # or whatever branch you want synced
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Mirror to Azure DevOps
+      - name: Set up Git config
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
 
-          # Add Azure DevOps as a remote and push
-          git remote add azure https://<AZURE_USERNAME>:<AZURE_PAT>@dev.azure.com/ashukumavat2410/_git/Java-YAML-CICD
-          git push azure main --force
-        env:
-          AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
-          AZURE_PAT: ${{ secrets.AZURE_PAT }}
+      - name: Push to Azure DevOps
+        run: |
+          git remote add azure https://$(echo "${{ secrets.AZURE_USERNAME }}"):${{ secrets.AZURE_PAT }}@dev.azure.com/ashukumavat2410/_git/Java-YAML-CICD
+          git push --force azure main
