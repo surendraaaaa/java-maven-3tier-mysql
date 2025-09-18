@@ -1,67 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Frontend for Java Maven 3-Tier App</title>
-</head>
-<body>
-    <h1>Frontend for Java Maven 3-Tier App</h1>
+<script>
+    // Detect the current frontend host (EC2 public IP or domain)
+    const host = window.location.hostname;
 
-    <h2>Add New User</h2>
-    <input type="text" id="name" placeholder="Name">
-    <input type="email" id="email" placeholder="Email">
-    <button id="saveBtn">Save User</button>
-    <p id="response"></p>
+    // Backend runs on 30808, frontend on 30080
+    const backendBaseUrl = `http://${host}:30808`;
 
-    <h2>All Users</h2>
-    <div id="userList"></div>
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const saveBtn = document.getElementById('saveBtn');
+    const responseParagraph = document.getElementById('response');
+    const userListDiv = document.getElementById('userList');
 
-    <script>
-        const nameInput = document.getElementById('name');
-        const emailInput = document.getElementById('email');
-        const saveBtn = document.getElementById('saveBtn');
-        const responseParagraph = document.getElementById('response');
-        const userListDiv = document.getElementById('userList');
-
-        // Load all users
-        async function loadUsers() {
-            try {
-                const response = await fetch('http://localhost:8080/users');
-                const users = await response.json();
-                console.log("Users fetched:", users);
-                userListDiv.innerHTML = users.map(u => `${u.id} | ${u.name} | ${u.email}`).join('<br>');
-            } catch (err) {
-                userListDiv.innerText = 'Error loading users: ' + err;
-            }
+    // Load all users
+    async function loadUsers() {
+        try {
+            const response = await fetch(`${backendBaseUrl}/users`);
+            const users = await response.json();
+            userListDiv.innerHTML = users.map(u => `${u.id} | ${u.name} | ${u.email}`).join('<br>');
+        } catch (err) {
+            userListDiv.innerText = 'Error loading users: ' + err;
         }
+    }
 
-        // Run once on load
-        loadUsers();
+    // Run once on load
+    loadUsers();
 
-        // Save user
-        saveBtn.addEventListener('click', async () => {
-            const user = {
-                name: nameInput.value,
-                email: emailInput.value
-            };
+    // Save user
+    saveBtn.addEventListener('click', async () => {
+        const user = {
+            name: nameInput.value,
+            email: emailInput.value
+        };
 
-            try {
-                const response = await fetch('http://localhost:8080/users', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(user)
-                });
-                const savedUser = await response.json();
-                console.log("Saved user response:", savedUser); // Debug log
-                responseParagraph.innerText = `Saved user with ID: ${savedUser.id ?? "(no id in response)"}`;
-                nameInput.value = '';
-                emailInput.value = '';
-                loadUsers();
-            } catch (err) {
-                responseParagraph.innerText = 'Error: ' + err;
-            }
-        });
-    </script>
-</body>
-</html>
-
+        try {
+            const response = await fetch(`${backendBaseUrl}/users`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(user)
+            });
+            const savedUser = await response.json();
+            responseParagraph.innerText = `Saved user with ID: ${savedUser.id ?? "(no id in response)"}`;
+            nameInput.value = '';
+            emailInput.value = '';
+            loadUsers();
+        } catch (err) {
+            responseParagraph.innerText = 'Error: ' + err;
+        }
+    });
+</script>
