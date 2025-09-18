@@ -32,6 +32,9 @@ jobs:
           rsync -av --exclude='.git' ./ azure_repo/
 
           cd azure_repo
+
           git add .
           git commit -m "Sync from GitHub to Azure DevOps" || echo "No changes to commit"
           git push origin main --force
+
+          echo "Mirror complete!"
