@@ -1,50 +1,64 @@
-<script>
-    // Detect the current frontend host (EC2 public IP or domain)
-    const host = window.location.hostname;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Frontend for Java Maven 3-Tier App</title>
+</head>
+<body>
+    <h1>Frontend for Java Maven 3-Tier App</h1>
 
-    // Backend runs on 30808, frontend on 30080
-    const backendBaseUrl = `http://${host}:30808`;
+    <h2>Add New User</h2>
+    <input type="text" id="name" placeholder="Name">
+    <input type="email" id="email" placeholder="Email">
+    <button id="saveBtn">Save User</button>
+    <p id="response"></p>
 
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
-    const saveBtn = document.getElementById('saveBtn');
-    const responseParagraph = document.getElementById('response');
-    const userListDiv = document.getElementById('userList');
+    <h2>All Users</h2>
+    <div id="userList"></div>
 
-    // Load all users
-    async function loadUsers() {
-        try {
-            const response = await fetch(`${backendBaseUrl}/users`);
-            const users = await response.json();
-            userListDiv.innerHTML = users.map(u => `${u.id} | ${u.name} | ${u.email}`).join('<br>');
-        } catch (err) {
-            userListDiv.innerText = 'Error loading users: ' + err;
+    <!-- Corrected script -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const host = window.location.hostname;
+        const backendBaseUrl = `http://${host}:30808`;
+
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const saveBtn = document.getElementById('saveBtn');
+        const responseParagraph = document.getElementById('response');
+        const userListDiv = document.getElementById('userList');
+
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${backendBaseUrl}/users`);
+                const users = await response.json();
+                userListDiv.innerHTML = users.map(u => `${u.id} | ${u.name} | ${u.email}`).join('<br>');
+            } catch (err) {
+                userListDiv.innerText = 'Error loading users: ' + err;
+            }
         }
-    }
 
-    // Run once on load
-    loadUsers();
+        loadUsers();
 
-    // Save user
-    saveBtn.addEventListener('click', async () => {
-        const user = {
-            name: nameInput.value,
-            email: emailInput.value
-        };
-
-        try {
-            const response = await fetch(`${backendBaseUrl}/users`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(user)
-            });
-            const savedUser = await response.json();
-            responseParagraph.innerText = `Saved user with ID: ${savedUser.id ?? "(no id in response)"}`;
-            nameInput.value = '';
-            emailInput.value = '';
-            loadUsers();
-        } catch (err) {
-            responseParagraph.innerText = 'Error: ' + err;
-        }
+        saveBtn.addEventListener('click', async () => {
+            const user = { name: nameInput.value, email: emailInput.value };
+            try {
+                const response = await fetch(`${backendBaseUrl}/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(user)
+                });
+                const savedUser = await response.json();
+                responseParagraph.innerText = `Saved user with ID: ${savedUser.id ?? "(no id in response)"}`;
+                nameInput.value = '';
+                emailInput.value = '';
+                loadUsers();
+            } catch (err) {
+                responseParagraph.innerText = 'Error: ' + err;
+            }
+        });
     });
-</script>
+    </script>
+</body>
+</html>
+
