@@ -1,40 +1,26 @@
-name: Mirror to Azure DevOps
-
+name: Sync GitHub to Azure DevOps
 on:
   push:
     branches:
-      - main
+      - main # or the name of your default branch
 
 jobs:
-  mirror:
+  sync:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout GitHub repo
-        uses: actions/checkout@v3
+    - name: Checkout GitHub Repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # Fetches all history for all branches and tags
 
-      - name: Set Git identity
-        run: |
-          git config --global user.email "${{ secrets.AZUSER_EMAIL }}"
-          git config --global user.name "${{ secrets.AZUSERNAME }}"
+    - name: Configure Git
+      run: |
+        git config --global user.email "ashukumavat2410@gmail.com"
+        git config --global user.name "ashukumavat2410@gmail.com"
 
-      - name: Mirror to Azure DevOps
-        env:
-          AZUSERNAME: ${{ secrets.AZUSERNAME }}
-          AZUREPAT: ${{ secrets.AZUREPAT }}
-          AZORG: ${{ secrets.AZORG }}
-          AZREPO: ${{ secrets.AZREPO }}
-        run: |
-          echo "Cloning Azure DevOps repo..."
-          git clone https://$AZUSERNAME:$AZUREPAT@dev.azure.com/$AZORG/$AZREPO/_git/$AZREPO azure_repo
-
-          echo "Copying files from GitHub repo to Azure DevOps repo..."
-          rsync -av --exclude='.git' ./ azure_repo/
-
-          cd azure_repo
-
-          git add .
-          git commit -m "Sync from GitHub to Azure DevOps" || echo "No changes to commit"
-          git push origin main --force
-
-          echo "Mirror complete!"
+    - name: Push to Azure DevOps
+      env:
+        ADO_PAT: ${{ secrets.AZURE_PAT }}
+      run: |
+        git remote add azuredevops https://ashukumavat2410@dev.azure.com/ashukumavat2410/Java-YAML-CICD/_git/Java-YAML-CICD
+        git push --force azuredevops main
