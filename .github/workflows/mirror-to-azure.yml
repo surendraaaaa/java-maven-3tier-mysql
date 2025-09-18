@@ -23,14 +23,14 @@ jobs:
           AZUSERNAME: ${{ secrets.AZUSERNAME }}
           AZUREPAT: ${{ secrets.AZUREPAT }}
           AZORG: ${{ secrets.AZORG }}
-          AZREPO: ${{ secrets.AZREPO }}  # Repo name in Azure DevOps
+          AZREPO: ${{ secrets.AZREPO }}
         run: |
           echo "Cloning Azure DevOps repo..."
           git clone https://$AZUSERNAME:$AZUREPAT@dev.azure.com/$AZORG/$AZREPO/_git/$AZREPO azure_repo
-          
+
           echo "Copying files from GitHub repo to Azure DevOps repo..."
-          cp -r ./* azure_repo/
-          
+          rsync -av --exclude='.git' ./ azure_repo/
+
           cd azure_repo
           git add .
           git commit -m "Sync from GitHub to Azure DevOps" || echo "No changes to commit"
